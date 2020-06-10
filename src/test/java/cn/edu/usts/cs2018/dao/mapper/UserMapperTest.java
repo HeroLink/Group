@@ -45,21 +45,22 @@ public class UserMapperTest
     public void insert()
     {
         User user = new User();
-        user.setUsername("link");
-        user.setPassword("link");
         user.setGender("male");
         user.setPhone("18012616025");
         user.setIdentity(1);
-        int i = mapper.insert(user);
+        for (int i = 1; i < 100; i++)
+        {
+            user.setUsername("visitor" + i);
+            user.setPassword("visitor" + i);
+            mapper.insert(user);
+        }
         sqlSession.commit();
-        System.out.println(i);
-        System.out.println(user);
     }
 
     @Test
     public void delete()
     {
-        int i=mapper.delete(6);
+        int i = mapper.delete(6);
         sqlSession.commit();
         System.out.println(i);
     }
@@ -77,6 +78,15 @@ public class UserMapperTest
         int i = mapper.update(user);
         sqlSession.commit();
         System.out.println(i);
+        System.out.println(user);
+    }
+
+    @Test
+    public void findByUidUname()
+    {
+        int i=1;
+        String name="admin";
+        User user=mapper.findByUidUname(i,name);
         System.out.println(user);
     }
 }

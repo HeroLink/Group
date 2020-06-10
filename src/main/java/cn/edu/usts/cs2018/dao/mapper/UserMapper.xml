@@ -20,6 +20,18 @@
         where uid = #{uid}
     </select>
 
+    <select id="findByUname" parameterType="String" resultType="cn.edu.usts.cs2018.pojo.User">
+        select *
+        from users
+        where username = #{username}
+    </select>
+    <select id="findByUidUname" resultType="cn.edu.usts.cs2018.pojo.User">
+        select *
+        from users
+        where uid = #{uid}
+          and username = #{username}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="uid">
         insert into users(username, password, gender, phone, identity)
         values (#{username}, #{password}, #{gender}, #{phone}, #{identity})

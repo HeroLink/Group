@@ -1,4 +1,4 @@
-package cn.edu.usts.cs2018.utils;
+package cn.edu.usts.cs2018.domain;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

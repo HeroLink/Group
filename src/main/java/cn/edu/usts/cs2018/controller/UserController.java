@@ -3,7 +3,8 @@ package cn.edu.usts.cs2018.controller;
 import cn.edu.usts.cs2018.domain.AjaxResult;
 import cn.edu.usts.cs2018.pojo.User;
 import cn.edu.usts.cs2018.service.base.IUserService;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -28,7 +29,9 @@ public class UserController
     @Qualifier("userService")
     private IUserService userService;
 
-    private Logger logger = Logger.getLogger(UserController.class);
+    private String prefix = "/common";
+
+    private Logger logger = LogManager.getLogger(UserController.class);
 
     public IUserService getUserService()
     {
@@ -56,15 +59,9 @@ public class UserController
             if (user != null)
             {
                 logger.info("登陆成功！" + user.toString());
+                request.getSession().setAttribute("user", user);
                 // 0：管理员，1：用户
-                if (user.getIdentity() == 0)
-                {
-                    return AjaxResult.success((Object) "admin");
-                }
-                else
-                {
-                    return AjaxResult.success((Object) "user");
-                }
+                return AjaxResult.success((Object) "admin");
             }
             else
             {
@@ -77,9 +74,43 @@ public class UserController
         }
     }
 
-
-    public String register()
+    @RequestMapping("/register")
+    @ResponseBody
+    public AjaxResult register(User entity, HttpServletRequest request, String validateCode)
     {
-        return "error";
+        String verifycode = (String) request.getSession().getAttribute("verifycode");
+        request.getSession().removeAttribute("verifyCode");
+        if (Objects.equals(validateCode, verifycode))
+        {
+            entity.setIdentity(1);
+            int i = userService.register(entity);
+            if (i > 0)
+            {
+                logger.info("注册成功！" + entity.toString());
+                return AjaxResult.success();
+            }
+            else
+            {
+                if (i == 0)
+                {
+                    return AjaxResult.error("注册失败，用户名已存在！");
+                }
+                else
+                {
+                    return AjaxResult.error("注册失败！请联系管理员查找原因！");
+                }
+            }
+        }
+        else
+        {
+            return AjaxResult.error("验证码错误！");
+        }
+    }
+
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest request)
+    {
+        request.getSession().invalidate();
+        return prefix + "login";
     }
 }

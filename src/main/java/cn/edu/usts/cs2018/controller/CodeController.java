@@ -1,8 +1,9 @@
 package cn.edu.usts.cs2018.controller;
 
-import cn.edu.usts.cs2018.utils.CreateCodeImage;
-import cn.edu.usts.cs2018.utils.CreateVerifyCode;
-import org.apache.log4j.Logger;
+import cn.edu.usts.cs2018.domain.CreateCodeImage;
+import cn.edu.usts.cs2018.domain.CreateVerifyCode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -34,7 +35,7 @@ public class CodeController
         resp.setDateHeader("Expires", 0);
         //以字节流发过去，交给img的src属性去解析即可
         ImageIO.write(new CreateCodeImage(verifyCode).createImage(), "jpg", resp.getOutputStream());
-        Logger logger = Logger.getLogger(CodeController.class);
+        Logger logger = LogManager.getLogger(CodeController.class);
         logger.info("验证码创建成功:" + verifyCode);
     }
 }

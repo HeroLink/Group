@@ -40,7 +40,7 @@ function login()
             {
                 if (r.data == "admin")
                 {
-                    location.href = getContextPath() + "/common/admin.jsp";
+                    location.href = getContextPath() + "/admin/admin.jsp";
                 }
                 else
                 {

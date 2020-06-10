@@ -1,54 +1,63 @@
-
-$(function() {
+$(function ()
+{
     validateRule();
-    $('.imgcode').click(function() {
-		var url = ctx + "captcha/captchaImage?type=" + captchaType + "&s=" + Math.random();
-		$(".imgcode").attr("src", url);
-	});
+    $('.imgcode').click(function ()
+    {
+        var url = getContextPath() + "/getcode?" + Math.random();
+        $(".imgcode").attr("src", url);
+    });
 });
 
 $.validator.setDefaults({
-    submitHandler: function() {
-    	register();
+    submitHandler: function ()
+    {
+        register();
     }
 });
 
-function register() {
-	$.modal.loading($("#btnSubmit").data("loading"));
-	var username = $.common.trim($("input[name='username']").val());
+function register()
+{
+    $.modal.loading($("#btnSubmit").data("loading"));
+    var username = $.common.trim($("input[name='username']").val());
     var password = $.common.trim($("input[name='password']").val());
     var validateCode = $("input[name='validateCode']").val();
     $.ajax({
         type: "post",
-        url: ctx + "register",
+        url: getContextPath() + "/user/register",
         data: {
-            "loginName": username,
+            "username": username,
             "password": password,
             "validateCode": validateCode
         },
-        success: function(r) {
-            if (r.code == 0) {
-            	layer.alert("<font color='red'>恭喜你，您的账号 " + username + " 注册成功！</font>", {
-        	        icon: 1,
-        	        title: "系统提示"
-        	    },
-        	    function(index) {
-        	        //关闭弹窗
-        	        layer.close(index);
-        	        location.href = ctx + 'login';
-        	    });
-            } else {
-            	$.modal.closeLoading();
-            	$('.imgcode').click();
-            	$(".code").val("");
-            	$.modal.msg(r.msg);
+        success: function (r)
+        {
+            if (r.code == 0)
+            {
+                layer.alert("<font color='red'>恭喜你，您的账号 " + username + " 注册成功！</font>", {
+                        icon: 1,
+                        title: "系统提示"
+                    },
+                    function (index)
+                    {
+                        //关闭弹窗
+                        layer.close(index);
+                        location.href = getContextPath() + "/common/login.jsp";
+                    });
+            }
+            else
+            {
+                $.modal.closeLoading();
+                $('.imgcode').click();
+                $(".code").val("");
+                $.modal.msg(r.msg);
             }
         }
     });
 }
 
-function validateRule() {
-	var icon = "<i class='fa fa-times-circle'></i> ";
+function validateRule()
+{
+    var icon = "<i class='fa fa-times-circle'></i> ";
     $("#registerForm").validate({
         rules: {
             username: {
@@ -70,7 +79,7 @@ function validateRule() {
                 minlength: icon + "用户名不能小于2个字符"
             },
             password: {
-            	required: icon + "请输入您的密码",
+                required: icon + "请输入您的密码",
                 minlength: icon + "密码不能小于5个字符",
             },
             confirmPassword: {
@@ -80,3 +89,12 @@ function validateRule() {
         }
     })
 }
+
+function getContextPath()
+{
+    var pathName = document.location.pathname;
+    var index = pathName.substr(1).indexOf("/");
+    var result = pathName.substr(0, index + 1);
+    return result;
+}
+

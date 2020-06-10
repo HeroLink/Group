@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--关闭log4j记录自身日志，如果需要开启将status改成相应的级别-->
+<!--OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL-->
+<configuration status="OFF">
+    <properties>
+        <!--web根目录下-->
+        <property name="LOG_HOME">${web:rootDir}/logs</property>
+    </properties>
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- 控制台只输出level级别及以上的信息（onMatch），其他的直接拒绝（onMismatch) ,设置后可屏蔽具体logger的设定-->
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%n"/>
+        </Console>
+        <!-- 文件打印所有信息，适合临时测试使用 ,append="true" 指定追加内容到文件 -->
+        <File name="Spring" fileName="${LOG_HOME}/spring.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%n"/>
+        </File>
+        <File name="Mybatis" fileName="${LOG_HOME}/mybatis.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%n"/>
+        </File>
+        <File name="ERROR" fileName="${LOG_HOME}/error.log" append="true">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%n"/>
+        </File>
+        <RollingFile name="RollingFile" fileName="${LOG_HOME}/web.log"
+                     filePattern="logs/$${date:yyyy-MM}/web-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%n"/>
+            <SizeBasedTriggeringPolicy size="2MB"/>
+        </RollingFile>
+    </appenders>
+
+    <loggers>
+        <root level="trace">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="ERROR"/>
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="Spring"/>
+            <appender-ref ref="Mybatis"/>
+
+        </root>
+
+<!--        &lt;!&ndash;additivity=false 表示不往上继承root，因此没有打印root策略的日志&ndash;&gt;-->
+<!--        <logger name="org.springframework" level="DEBUG" additivity="false">-->
+<!--            <appender-ref ref="Spring"/>-->
+
+<!--        </logger>-->
+
+<!--        <logger name="org.apache.ibatis" level="DEBUG" additivity="false">-->
+<!--            <appender-ref ref="Mybatis"/>-->
+<!--        </logger>-->
+
+
+        <!--        <logger name="org.springframework" level="WARN" additivity="false">-->
+        <!--            <appender-ref ref="Spring"/>-->
+        <!--            <appender-ref ref="Console"/>-->
+        <!--        </logger>-->
+
+        <!--        <logger name="org.apache.ibatis" level="WARN" additivity="false">-->
+        <!--            <appender-ref ref="Mybatis"/>-->
+        <!--            <appender-ref ref="Console"/>-->
+
+        <!--        </logger>-->
+
+    </loggers>
+</configuration>

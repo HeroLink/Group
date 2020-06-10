@@ -17,14 +17,6 @@
     <style type="text/css">label.error {
         position: inherit;
     }</style>
-    <script>
-        if (window.top !== window.self)
-        {
-            alert('未登录或登录超时。请重新登录');
-            window.top.location = window.location
-        }
-        ;
-    </script>
 </head>
 <body class="signin">
 <div class="signinpanel">
@@ -39,31 +31,29 @@
                     <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> MyBatis</li>
                     <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Bootstrap</li>
                 </ul>
-                <strong>还没有账号？ <a href="${pageContext.request.contextPath}/common/register.jsp" style="color:red">立即注册&raquo;</a></strong>
+                <strong>已经注册过? <a href="${pageContext.request.contextPath}/common/login.jsp" style="color:red">直接登录&raquo;</a></strong>
             </div>
         </div>
         <div class="col-sm-5">
-            <form id="signupForm" autocomplete="off">
-                <h4 class="no-margins" style="font-size: 20px">登录：</h4>
-                <input type="text" name="username" class="form-control uname" placeholder="用户名" value="admin"/>
-                <input type="password" name="password" class="form-control pword" placeholder="密码" value="admin"/>
+            <form id="registerForm" autocomplete="off">
+                <h4 class="no-margins" style="font-size: 20px">注册：</h4>
+                <input type="text" name="username" class="form-control uname" placeholder="用户名" maxlength="20"/>
+                <input type="password" name="password" class="form-control pword" placeholder="密码" maxlength="20"/>
+                <input type="password" name="confirmPassword" class="form-control pword" placeholder="确认密码"
+                       maxlength="20"/>
                 <div class="row m-t">
                     <div class="col-xs-6">
                         <input type="text" name="validateCode" class="form-control code" placeholder="验证码"
-                               maxlength="5"/>
+                               maxlength="5">
                     </div>
                     <div class="col-xs-6">
                         <a href="javascript:void(0);" title="点击更换验证码">
-                            <img class="imgcode" src="${pageContext.request.contextPath}/getcode" width="85%"/>
+                            <img src="${pageContext.request.contextPath}/getcode" class="imgcode" width="85%"/>
                         </a>
                     </div>
                 </div>
-                <div class="checkbox-custom">
-                    <input type="checkbox" id="rememberme" name="rememberme"> <label style="font-size: 15px"
-                                                                                     for="rememberme">记住我</label>
-                </div>
                 <button style="font-size: 20px" class="btn btn-success btn-block" id="btnSubmit"
-                        data-loading="正在验证登录，请稍后...">登录
+                        data-loading="正在验证注册，请稍后...">注册
                 </button>
             </form>
         </div>
@@ -74,6 +64,7 @@
         </div>
     </div>
 </div>
+
 <!-- 全局js -->
 <script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
@@ -83,6 +74,6 @@
 <script src="${pageContext.request.contextPath}/ajax/libs/layer/layer.min.js"></script>
 <script src="${pageContext.request.contextPath}/ajax/libs/blockUI/jquery.blockUI.js"></script>
 <script src="${pageContext.request.contextPath}/js/group-ui.js"></script>
-<script src="${pageContext.request.contextPath}/js/login.js"></script>
+<script src="${pageContext.request.contextPath}/js/register.js"></script>
 </body>
 </html>

@@ -115,7 +115,8 @@
                 {
                     field: 'uid',
                     title: '用户ID',
-                    sortable: true
+                    sortable: true,
+                    align: 'center',
                 },
                 {
                     field: 'username',
@@ -124,6 +125,7 @@
                 {
                     field: 'gender',
                     title: '性别',
+                    align: 'center',
                     //通过formatter处理男女值
                     formatter: function (value)
                     {
@@ -144,6 +146,18 @@
                 {
                     field: 'identity',
                     title: '身份',
+                    align: 'center',
+                    formatter(value)
+                    {
+                        if (value == 0)
+                        {
+                            return "管理员";
+                        }
+                        else
+                        {
+                            return "用户";
+                        }
+                    }
                 }
             ]
         };

@@ -2,6 +2,7 @@ package cn.edu.usts.cs2018.dao.mapper;
 
 import cn.edu.usts.cs2018.dao.base.IBaseDao;
 import cn.edu.usts.cs2018.pojo.Event;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,4 +15,8 @@ import java.util.List;
 public interface EventMapper extends IBaseDao<Event>
 {
     List<Event> findByEventName(String eventname);
+
+    Event findByEventId(Integer eventid);
+
+    Event findByEidEname(@Param("eventid") Integer eventid, @Param("eventname") String eventname);
 }

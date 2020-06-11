@@ -30,10 +30,10 @@
                 <div class="select-list">
                     <ul>
                         <li>
-                            用户ID：<input type="text" name="uid"/>
+                            活动ID：<input type="text" name="eventid"/>
                         </li>
                         <li>
-                            用户名：<input type="text" name="username"/>
+                            活动名：<input type="text" name="eventname"/>
                         </li>
                         <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
@@ -92,13 +92,13 @@
     $(function ()
     {
         var options = {
-            url: ctx + "/admin/list",
-            createUrl: ctx + "/admin/add.jsp",
-            updateUrl: ctx + "/admin/update/{id}",
-            removeUrl: ctx + "/admin/remove",
+            url: ctx + "/event/list",
+            createUrl: ctx + "/event/add.jsp",
+            updateUrl: ctx + "/event/update/{id}",
+            removeUrl: ctx + "/event/remove",
             striped: true,                      //是否显示行间隔色
             sortable: true,
-            sortName: "uid",
+            sortName: "eventid",
             sortOrder: "asc",
             sidePagination: "server",
             pagination: true,
@@ -106,43 +106,53 @@
             pageSize: 20,  // 指定每页的大小
             pageList: [20, 30, 50], // 可以设置每页记录条数的列表
             dataField: "rows",
-            uniqueId: "uid",
-            modalName: "用户",
+            uniqueId: "eventid",
+            modalName: "活动",
             columns: [{
                 checkbox: true
             },
                 {
-                    field: 'uid',
-                    title: '用户ID',
-                    sortable: true
+                    field: 'eventid',
+                    title: '活动id',
+                    sortable: true,
+                    align: 'center',
                 },
                 {
-                    field: 'username',
-                    title: '用户名'
+                    field: 'eventname',
+                    title: '活动名'
                 },
                 {
-                    field: 'gender',
-                    title: '性别',
-                    //通过formatter处理男女值
-                    formatter: function (value)
-                    {
-                        if (value == "male")
-                        {
-                            return "男";
-                        }
-                        else
-                        {
-                            return "女";
-                        }
-                    }
+                    field: 'content',
+                    title: '活动详情',
                 },
                 {
-                    field: 'phone',
-                    title: '电话号码',
+                    field: 'starttime',
+                    title: '开始时间',
                 },
                 {
-                    field: 'identity',
-                    title: '身份',
+                    field: 'length',
+                    title: '持续时间/(天)',
+                    align: 'center',
+                },
+                {
+                    field: 'curperson',
+                    title: '当前人数',
+                    align: 'center',
+                },
+                {
+                    field: 'maxperson',
+                    title: '最大人数',
+                    align: 'center',
+                },
+                {
+                    field: 'curmoney',
+                    title: '当前资金/(元)',
+                    align: 'center',
+                },
+                {
+                    field: 'totalmoney',
+                    title: '总资金/(元)',
+                    align: 'center',
                 }
             ]
         };

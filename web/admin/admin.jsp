@@ -55,7 +55,7 @@
                             class="fa fa-gear"></i><span class="nav-label">用户管理</span></a>
                 </li>
                 <li>
-                    <a class="menuItem" href="${pageContext.request.contextPath}/group/managegroup.jsp"><i
+                    <a class="menuItem" href="${pageContext.request.contextPath}/event/manageevent.jsp"><i
                             class="fa fa-cubes" aria-hidden="true"></i><span class="nav-label">组团管理</span></a>
                 </li>
 

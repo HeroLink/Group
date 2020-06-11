@@ -11,9 +11,23 @@
         where eventname = #{eventname}
     </select>
 
+    <select id="findByEventId" parameterType="Integer" resultType="cn.edu.usts.cs2018.pojo.Event">
+        select *
+        from event
+        where eventid = #{eventid}
+    </select>
+
+    <select id="findByEidEname" resultType="cn.edu.usts.cs2018.pojo.Event">
+        select *
+        from event
+        where eventid = #{eventid}
+          and eventname = #{eventname}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="eventid">
-        insert into event(eventname, content, starttime, length, maxperson, totalmoney)
-        values (#{eventname}, #{content}, #{starttime}, #{length}, #{maxperson}, #{totalmoeny})
+        insert into event(eventname, content, starttime, length, curperson, maxperson, curmoney, totalmoney)
+        values (#{eventname}, #{content}, #{starttime}, #{length}, #{curperson}, #{maxperson}, #{curmoney},
+                #{totalmoney})
     </insert>
 
     <delete id="delete" parameterType="Integer">
@@ -22,12 +36,15 @@
         where eventid = #{eventid}
     </delete>
 
-    <update id="update" parameterType="Integer">
+    <update id="update">
         update event
         set eventname=#{eventname},
             content=#{content},
             starttime=#{starttime},
             length=#{length},
+            curperson=#{curperson},
+            maxperson=#{maxperson},
+            curmoney=#{curmoney},
             totalmoney=#{totalmoney}
         where eventid = #{eventid}
     </update>

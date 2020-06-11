@@ -1,5 +1,7 @@
 package cn.edu.usts.cs2018.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -13,10 +15,14 @@ public class Event
     private Integer eventid;
     private String eventname;
     private String content;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date starttime;
     private int length;
+    private int curperson;
     private int maxperson;
+    private int curmoney;
     private int totalmoney;
+
 
     public Event()
     {
@@ -31,9 +37,31 @@ public class Event
                 ", content='" + content + '\'' +
                 ", starttime=" + starttime +
                 ", length=" + length +
+                ", curperson=" + curperson +
                 ", maxperson=" + maxperson +
+                ", curmoney=" + curmoney +
                 ", totalmoney=" + totalmoney +
                 '}';
+    }
+
+    public int getCurmoney()
+    {
+        return curmoney;
+    }
+
+    public void setCurmoney(int curmoney)
+    {
+        this.curmoney = curmoney;
+    }
+
+    public int getCurperson()
+    {
+        return curperson;
+    }
+
+    public void setCurperson(int curperson)
+    {
+        this.curperson = curperson;
     }
 
     public Integer getEventid()

@@ -46,6 +46,7 @@
     <!-- mapping文件路径配置 -->
     <mappers>
         <mapper class="cn.edu.usts.cs2018.dao.mapper.UserMapper"/>
+        <mapper class="cn.edu.usts.cs2018.dao.mapper.EventMapper"/>
     </mappers>
 
 </configuration>

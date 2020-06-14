@@ -25,39 +25,6 @@
 <body class="gray-bg">
 <div class="container-div">
     <div class="row">
-        <div class="col-sm-12 search-collapse">
-            <form id="user-form">
-                <div class="select-list">
-                    <ul>
-                        <li>
-                            活动ID：<input type="text" name="eventid"/>
-                        </li>
-                        <li>
-                            活动名：<input type="text" name="eventname"/>
-                        </li>
-                        <li>
-                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
-                                    class="fa fa-search"></i>&nbsp;搜索</a>
-                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
-                                    class="fa fa-refresh"></i>&nbsp;重置</a>
-                        </li>
-                    </ul>
-                </div>
-            </form>
-        </div>
-
-        <div class="btn-group-sm" id="toolbar" role="group">
-            <a class="btn btn-success" onclick="$.operate.add()">
-                <i class="fa fa-plus"></i> 新增
-            </a>
-            <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
-                <i class="fa fa-edit"></i> 修改
-            </a>
-            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
-                <i class="fa fa-remove"></i> 删除
-            </a>
-        </div>
-
         <div class="col-sm-12 select-table table-striped">
             <table id="bootstrap-table"></table>
         </div>
@@ -87,50 +54,73 @@
 <script src="${pageContext.request.contextPath}/js/group-ui.js"></script>
 
 <script>
-    var ctx = getContextPath();
+    <%--扩展Array--%>
+    Array.prototype.contains = function (obj)
+    {
+        var i = this.length;
+        while (i--)
+        {
+            if (this[i] === obj)
+            {
+                return true;
+            }
+        }
+        return false;
+    };
 
+    var ctx = getContextPath();
+    var list;
     $(function ()
     {
+        $.ajax({
+            url: ctx + "/myevent/listnotjoin",
+            type: 'post',
+            dataType: 'json',
+            data: {"uid":${user.uid}},
+            success: function (result)
+            {
+                if (result.code == 0)
+                {
+                    var array = result.data;
+                    list = new Array(array.length);
+                    // console.log(array);
+                    for (let i = 0; i < array.length; i++)
+                    {
+                        list[i] = array[i].eventid;
+                    }
+                    // console.log(list);
+                }
+                else
+                {
+                    $.modal.msgError("请求失败！");
+                }
+            }
+        });
+
         var options = {
-            url: ctx + "/event/list",
-            createUrl: ctx + "/event/add.jsp",
-            updateUrl: ctx + "/event/update/{id}",
-            removeUrl: ctx + "/event/remove",
+            url: ctx + "/myevent/listall/${user.uid}",
             striped: true,                      //是否显示行间隔色
             sortable: true,
             sortName: "eventid",
             sortOrder: "asc",
             sidePagination: "server",
-            pagination: true,
-            pageNumber: 1, //初始化页码
-            pageSize: 20,  // 指定每页的大小
-            pageList: [20, 30, 50], // 可以设置每页记录条数的列表
+            pagination: false,
             dataField: "rows",
             uniqueId: "eventid",
             modalName: "活动",
             columns: [{
-                checkbox: true
+                field: 'eventid',
+                title: '活动ID',
+                sortable: true,
+                align: 'center',
             },
-                {
-                    field: 'eventid',
-                    title: '活动ID',
-                    sortable: true,
-                    align: 'center',
-                },
                 {
                     field: 'eventname',
                     title: '活动名'
                 },
                 {
-                    // field: 'content',
+                    field: 'content',
                     title: '活动详情',
-                    align: 'center',
-                    formatter: function (value, row, index)
-                    {
-                        var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick=" $.modal.open(\'活动详情\', \'${pageContext.request.contextPath}/member/listmember/' + row.eventid + '\', 850, 650)"><i class="fa fa-edit"></i>查看详情</a> ');
-                        return actions.join('');
-                    }
                 },
                 {
                     field: 'starttime',
@@ -160,11 +150,72 @@
                     field: 'totalmoney',
                     title: '总资金/(元)',
                     align: 'center',
-                }
-            ]
+                },
+                {
+                    title: '是否同意加入',
+                    align: 'center',
+                    formatter: function (value, row, index)
+                    {
+                        if (list.contains(row.eventid))
+                        {
+                            var actions = [];
+                            actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="accept('
+                                + row.eventid +
+                                ')"><i class="fa fa-ticket"></i>同意加入</a>');
+                            actions.push('&nbsp;<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="refuse('
+                                + row.eventid +
+                                ')"><i class="fa fa-ban"></i>拒绝加入</a>');
+                            return actions.join('');
+                        }
+                    }
+                }]
         };
         $.table.init(options);
     });
+
+    function accept(eventid)
+    {
+        $.ajax({
+            url: ctx + "/myevent/accept",
+            type: 'post',
+            dataType: 'json',
+            data: {"uid":${user.uid}, "eventid": eventid},
+            success: function (result)
+            {
+                if (result.code == 0)
+                {
+                    $.modal.msgSuccess("加入成功！");
+                    window.location.reload();
+                }
+                else
+                {
+                    $.modal.msgError("加入失败！");
+                }
+            }
+        });
+    }
+
+    function refuse(eventid)
+    {
+        $.ajax({
+            url: ctx + "/myevent/refuse",
+            type: 'post',
+            dataType: 'json',
+            data: {"uid":${user.uid}, "eventid": eventid},
+            success: function (result)
+            {
+                if (result.code == 0)
+                {
+                    $.modal.msgSuccess("拒绝成功！");
+                    window.location.reload();
+                }
+                else
+                {
+                    $.modal.msgError("拒绝失败！");
+                }
+            }
+        });
+    }
 
     function getContextPath()
     {

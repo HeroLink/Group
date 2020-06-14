@@ -19,4 +19,5 @@ public interface EventMapper extends IBaseDao<Event>
     Event findByEventId(Integer eventid);
 
     Event findByEidEname(@Param("eventid") Integer eventid, @Param("eventname") String eventname);
+
 }

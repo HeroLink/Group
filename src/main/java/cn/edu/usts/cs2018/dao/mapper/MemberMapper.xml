@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.usts.cs2018.dao.mapper.MemberMapper">
+    <select id="findAll" resultType="cn.edu.usts.cs2018.pojo.Member">
+        select *
+        from member
+    </select>
+
+    <select id="findEventsByUid" parameterType="Integer" resultType="cn.edu.usts.cs2018.pojo.Event">
+        select eventid,
+               eventname,
+               content,
+               starttime,
+               length,
+               (select COUNT(uid) from member WHERE eventid = event.eventid AND accept = 1)   as curperson,
+               maxperson,
+               (select sum(payment) from member WHERE eventid = event.eventid AND accept = 1) as curmoney,
+               totalmoney
+        from event
+        where event.eventid in (select member.eventid from member where member.uid = #{uid} and member.accept = 1)
+    </select>
+
+    <!--[identity] 为SqlServer的关键字，使用[]框住-->
+    <!--MySQL的关键字，使用``框住-->
+    <select id="findUsersByEid" parameterType="Integer" resultType="cn.edu.usts.cs2018.pojo.User">
+        select users.uid, users.username, users.gender, users.phone, users.identity
+        from users
+        where users.uid in (select member.uid from member where member.eventid = #{evntid} and member.accept = 1)
+    </select>
+
+    <select id="findNoByUid" resultType="cn.edu.usts.cs2018.pojo.Event">
+        select eventid,
+               eventname,
+               content,
+               starttime,
+               length,
+               (select COUNT(uid) from member WHERE eventid = event.eventid AND accept = 1)   as curperson,
+               maxperson,
+               (select sum(payment) from member WHERE eventid = event.eventid AND accept = 1) as curmoney,
+               totalmoney
+        from event
+        where event.eventid in (select member.eventid from member where member.uid = #{uid} and member.accept = 0)
+    </select>
+    <select id="findLeader" resultType="cn.edu.usts.cs2018.pojo.User">
+        select users.uid, users.username, users.gender, users.phone, users.identity
+        from users
+        where users.uid in (select member.uid from member where member.eventid = #{eventid} and member.isleader = 1)
+    </select>
+
+    <select id="findByEid" parameterType="Integer" resultType="cn.edu.usts.cs2018.pojo.Member">
+        select *
+        from member
+        where eventid = #{eventid}
+    </select>
+
+    <select id="findAllEventsByUid" resultType="cn.edu.usts.cs2018.pojo.Event">
+        select eventid,
+               eventname,
+               content,
+               starttime,
+               length,
+               (select COUNT(uid) from member WHERE eventid = event.eventid AND accept = 1)   as curperson,
+               maxperson,
+               (select sum(payment) from member WHERE eventid = event.eventid AND accept = 1) as curmoney,
+               totalmoney
+        from event
+        where event.eventid in (select member.eventid from member where member.uid = #{uid})
+    </select>
+
+    <insert id="insert">
+        insert into member
+        values (#{eventid}, #{uid}, #{isleader}, #{payment}, #{accept})
+    </insert>
+
+    <update id="update">
+        update member
+        set isleader=#{isleader},
+            payment=#{payment},
+            accept=#{accept}
+        where eventid = #{eventid}
+          and uid = #{uid}
+    </update>
+
+    <delete id="delete">
+        delete
+        from member
+        where eventid = #{eventid}
+          and uid = #{uid}
+    </delete>
+
+</mapper>

@@ -2,32 +2,63 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.edu.usts.cs2018.dao.mapper.EventMapper">
     <select id="findAll" resultType="cn.edu.usts.cs2018.pojo.Event">
-        select *
+        select eventid,
+               eventname,
+               content,
+               starttime,
+               length,
+               (select COUNT(uid) from member WHERE eventid = event.eventid AND accept = 1)   as curperson,
+               maxperson,
+               (select sum(payment) from member WHERE eventid = event.eventid AND accept = 1) as curmoney,
+               totalmoney
         from event
     </select>
     <select id="findByEventName" resultType="cn.edu.usts.cs2018.pojo.Event">
-        select *
+        select eventid,
+               eventname,
+               content,
+               starttime,
+               length,
+               (select COUNT(uid) from member WHERE eventid = event.eventid AND accept = 1)   as curperson,
+               maxperson,
+               (select sum(payment) from member WHERE eventid = event.eventid AND accept = 1) as curmoney,
+               totalmoney
         from event
         where eventname = #{eventname}
     </select>
 
     <select id="findByEventId" parameterType="Integer" resultType="cn.edu.usts.cs2018.pojo.Event">
-        select *
+        select eventid,
+               eventname,
+               content,
+               starttime,
+               length,
+               (select COUNT(uid) from member WHERE eventid = event.eventid AND accept = 1)   as curperson,
+               maxperson,
+               (select sum(payment) from member WHERE eventid = event.eventid AND accept = 1) as curmoney,
+               totalmoney
         from event
         where eventid = #{eventid}
     </select>
 
     <select id="findByEidEname" resultType="cn.edu.usts.cs2018.pojo.Event">
-        select *
+        select eventid,
+               eventname,
+               content,
+               starttime,
+               length,
+               (select COUNT(uid) from member WHERE eventid = event.eventid AND accept = 1)   as curperson,
+               maxperson,
+               (select sum(payment) from member WHERE eventid = event.eventid AND accept = 1) as curmoney,
+               totalmoney
         from event
         where eventid = #{eventid}
           and eventname = #{eventname}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="eventid">
-        insert into event(eventname, content, starttime, length, curperson, maxperson, curmoney, totalmoney)
-        values (#{eventname}, #{content}, #{starttime}, #{length}, #{curperson}, #{maxperson}, #{curmoney},
-                #{totalmoney})
+        insert into event(eventname, content, starttime, length, maxperson, totalmoney)
+        values (#{eventname}, #{content}, #{starttime}, #{length}, #{maxperson}, #{totalmoney})
     </insert>
 
     <delete id="delete" parameterType="Integer">
@@ -42,9 +73,7 @@
             content=#{content},
             starttime=#{starttime},
             length=#{length},
-            curperson=#{curperson},
             maxperson=#{maxperson},
-            curmoney=#{curmoney},
             totalmoney=#{totalmoney}
         where eventid = #{eventid}
     </update>

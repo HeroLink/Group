@@ -48,13 +48,10 @@
 
         <div class="btn-group-sm" id="toolbar" role="group">
             <a class="btn btn-success" onclick="$.operate.add()">
-                <i class="fa fa-plus"></i> 新增
+                <i class="fa fa-plus"></i> 发布活动
             </a>
-            <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
-                <i class="fa fa-edit"></i> 修改
-            </a>
-            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
-                <i class="fa fa-remove"></i> 删除
+            <a class="btn btn-info multiple disabled" onclick="apply()">
+                <i class="fa fa-ticket"></i> 申请加入
             </a>
         </div>
 
@@ -89,13 +86,21 @@
 <script>
     var ctx = getContextPath();
 
+    function apply()
+    {
+        $.ajax(
+            {
+
+            }
+        )
+
+    }
+
     $(function ()
     {
         var options = {
             url: ctx + "/event/list",
             createUrl: ctx + "/event/add.jsp",
-            updateUrl: ctx + "/event/update/{id}",
-            removeUrl: ctx + "/event/remove",
             striped: true,                      //是否显示行间隔色
             sortable: true,
             sortName: "eventid",
@@ -122,15 +127,8 @@
                     title: '活动名'
                 },
                 {
-                    // field: 'content',
+                    field: 'content',
                     title: '活动详情',
-                    align: 'center',
-                    formatter: function (value, row, index)
-                    {
-                        var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick=" $.modal.open(\'活动详情\', \'${pageContext.request.contextPath}/member/listmember/' + row.eventid + '\', 850, 650)"><i class="fa fa-edit"></i>查看详情</a> ');
-                        return actions.join('');
-                    }
                 },
                 {
                     field: 'starttime',

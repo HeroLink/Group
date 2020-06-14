@@ -1,6 +1,7 @@
 package cn.edu.usts.cs2018.pojo;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Link Chen

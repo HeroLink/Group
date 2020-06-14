@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.naming.event.ObjectChangeListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Objects;
@@ -61,7 +62,11 @@ public class UserController
                 logger.info("登陆成功！" + user.toString());
                 request.getSession().setAttribute("user", user);
                 // 0：管理员，1：用户
-                return AjaxResult.success((Object) "admin");
+                if (user.getIdentity() == 0)
+                {
+                    return AjaxResult.success((Object) "admin");
+                }
+                return AjaxResult.success((Object) "user");
             }
             else
             {
@@ -111,6 +116,6 @@ public class UserController
     public String logout(HttpServletRequest request)
     {
         request.getSession().invalidate();
-        return prefix + "login";
+        return prefix + "/login";
     }
 }

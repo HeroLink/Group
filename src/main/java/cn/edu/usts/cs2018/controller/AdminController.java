@@ -62,6 +62,14 @@ public class AdminController
 //        return map;
 //    }
 
+    /**
+     * 分页用户列表
+     *
+     * @param pagination
+     * @param uid
+     * @param username
+     * @return
+     */
     @RequestMapping("/list")
     @ResponseBody
     public TableDataInfo list(Pagination pagination, Integer uid, String username)
@@ -79,11 +87,7 @@ public class AdminController
             {
                 logger.info("查询ID:" + uid);
                 logger.info(userService.findByUid(uid));
-                if (userService.findByUid(uid) == null)
-                {
-                    list = null;
-                }
-                else
+                if (userService.findByUid(uid) != null)
                 {
                     list.add(userService.findByUid(uid));
                 }
@@ -92,11 +96,7 @@ public class AdminController
             {
                 logger.info("查询用户名:" + username);
                 logger.info(userService.findByUname(username));
-                if (userService.findByUname(username) == null)
-                {
-                    list = null;
-                }
-                else
+                if (userService.findByUname(username) != null)
                 {
                     list.add(userService.findByUname(username));
                 }
@@ -105,12 +105,9 @@ public class AdminController
             {
                 logger.info("查询ID和用户名分别为:" + uid + "," + username);
                 logger.info(userService.findByUidUname(uid, username));
-                if (userService.findByUidUname(uid, username) == null)
+                if (userService.findByUidUname(uid, username) != null)
                 {
-                    list = null;
-                }
-                else
-                {
+                    //配合前端，显示未找到结果
                     list.add(userService.findByUidUname(uid, username));
                 }
             }
@@ -136,6 +133,12 @@ public class AdminController
         return rspData;
     }
 
+    /**
+     * 添加用户
+     *
+     * @param entity
+     * @return
+     */
     @RequestMapping("/add")
     @ResponseBody
     public AjaxResult add(User entity)
@@ -154,6 +157,13 @@ public class AdminController
         return AjaxResult.error();
     }
 
+    /**
+     * 更新用户get
+     *
+     * @param uid
+     * @param map
+     * @return
+     */
     @GetMapping("/update/{uid}")
     public String update(@PathVariable("uid") Integer uid, ModelMap map)
     {
@@ -163,6 +173,12 @@ public class AdminController
         return prefix + "/update";
     }
 
+    /**
+     * 更新用户post
+     *
+     * @param entity
+     * @return
+     */
     @PostMapping("/update")
     @ResponseBody
     public AjaxResult update(User entity)
@@ -177,6 +193,12 @@ public class AdminController
         return AjaxResult.error();
     }
 
+    /**
+     * 删除用户
+     *
+     * @param ids
+     * @return
+     */
     @RequestMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids)

@@ -2,7 +2,8 @@
   Created by IntelliJ IDEA.
   User: Link Chen
   Date: 6/9/2020
-  Time: 2:53 PM
+  Time: 2:52 PM
+  To change this template use File | Settings | File Templates.
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -13,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="keywords" content="">
     <meta name="description" content="">
-    <title>组团管理界面</title>
+    <title>活动成员详情</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="${pageContext.request.contextPath}/css/jquery.contextMenu.min.css" rel="stylesheet"/>
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet"/>
@@ -26,35 +27,17 @@
 <div class="container-div">
     <div class="row">
         <div class="col-sm-12 search-collapse">
-            <form id="user-form">
-                <div class="select-list">
-                    <ul>
-                        <li>
-                            活动ID：<input type="text" name="eventid"/>
-                        </li>
-                        <li>
-                            活动名：<input type="text" name="eventname"/>
-                        </li>
-                        <li>
-                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
-                                    class="fa fa-search"></i>&nbsp;搜索</a>
-                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
-                                    class="fa fa-refresh"></i>&nbsp;重置</a>
-                        </li>
-                    </ul>
-                </div>
-            </form>
+            <div class="text-box" style="font-size: 20px;margin-top:10px">
+                <label for="content">活动详情：</label> <input type="text" id="content" value="${event.content}" disabled>
+            </div>
         </div>
 
         <div class="btn-group-sm" id="toolbar" role="group">
             <a class="btn btn-success" onclick="$.operate.add()">
-                <i class="fa fa-plus"></i> 新增
-            </a>
-            <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
-                <i class="fa fa-edit"></i> 修改
+                <i class="fa fa-plus"></i> 邀请成员
             </a>
             <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
-                <i class="fa fa-remove"></i> 删除
+                <i class="fa fa-remove"></i> 删除成员
             </a>
         </div>
 
@@ -92,79 +75,101 @@
     $(function ()
     {
         var options = {
-            url: ctx + "/event/list",
-            createUrl: ctx + "/event/add.jsp",
-            updateUrl: ctx + "/event/update/{id}",
-            removeUrl: ctx + "/event/remove",
+            url: ctx + "/member/listmember/${event.eventid}",
+            createUrl: ctx + "/member/listuser/${event.eventid}",
+            removeUrl: ctx + "/member/remove/${event.eventid}",
             striped: true,                      //是否显示行间隔色
-            sortable: true,
-            sortName: "eventid",
-            sortOrder: "asc",
-            sidePagination: "server",
-            pagination: true,
-            pageNumber: 1, //初始化页码
-            pageSize: 20,  // 指定每页的大小
-            pageList: [20, 30, 50], // 可以设置每页记录条数的列表
+            pagination: false,
             dataField: "rows",
-            uniqueId: "eventid",
-            modalName: "活动",
+            uniqueId: "uid",
+            modalName: "成员",
             columns: [{
                 checkbox: true
             },
                 {
-                    field: 'eventid',
-                    title: '活动ID',
+                    field: 'uid',
+                    title: '用户ID',
                     sortable: true,
                     align: 'center',
                 },
                 {
-                    field: 'eventname',
-                    title: '活动名'
+                    field: 'username',
+                    title: '用户名'
                 },
                 {
-                    // field: 'content',
-                    title: '活动详情',
+                    field: 'gender',
+                    title: '性别',
                     align: 'center',
-                    formatter: function (value, row, index)
+                    //通过formatter处理男女值
+                    formatter: function (value)
                     {
-                        var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick=" $.modal.open(\'活动详情\', \'${pageContext.request.contextPath}/member/listmember/' + row.eventid + '\', 850, 650)"><i class="fa fa-edit"></i>查看详情</a> ');
-                        return actions.join('');
+                        if (value == "male")
+                        {
+                            return "男";
+                        }
+                        else
+                        {
+                            return "女";
+                        }
                     }
                 },
                 {
-                    field: 'starttime',
-                    title: '开始时间',
+                    field: 'phone',
+                    title: '电话号码',
                 },
                 {
-                    field: 'length',
-                    title: '持续时间/(天)',
+                    field: 'identity',
+                    title: '队长',
                     align: 'center',
-                },
-                {
-                    field: 'curperson',
-                    title: '当前人数',
-                    align: 'center',
-                },
-                {
-                    field: 'maxperson',
-                    title: '最大人数',
-                    align: 'center',
-                },
-                {
-                    field: 'curmoney',
-                    title: '当前资金/(元)',
-                    align: 'center',
-                },
-                {
-                    field: 'totalmoney',
-                    title: '总资金/(元)',
-                    align: 'center',
+                    formatter(value, row, index)
+                    {
+                        return isleader(row);
+                    }
                 }
             ]
         };
         $.table.init(options);
     });
+
+    function isleader(row)
+    {
+        if ("${leader.uid}" == "")
+        {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="changeLeader(\'' + row.uid + '\')"></i> ';
+        }
+        if (row.uid == "${leader.uid}")
+        {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\"></i> ';
+        }
+        return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="changeLeader(\'' + row.uid + '\')"></i> ';
+    }
+
+    function changeLeader(uid)
+    {
+        $.modal.confirm("确认将该成员设置为队长吗？", function ()
+        {
+            $.ajax({
+                url: ctx + "/member/leader",
+                type: 'post',
+                dataType: 'json',
+                data: {"uid": uid, "eventid":${event.eventid}},
+                //这里必须禁止cache，因为el表达式需要重新加载整个页面信息
+                cache: false,
+                success: function (result)
+                {
+                    if (result.code == 0)
+                    {
+                        $.modal.msg("队长更换成功", "success");
+                        window.location.reload();
+                    }
+                    else
+                    {
+                        $.modal.msg("队长更换失败", "error");
+                    }
+                }
+            });
+        })
+    }
 
     function getContextPath()
     {
@@ -176,4 +181,3 @@
 </script>
 </body>
 </html>
-

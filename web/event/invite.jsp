@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: Link Chen
-  Date: 6/9/2020
-  Time: 2:53 PM
+  Date: 6/11/2020
+  Time: 8:59 PM
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="keywords" content="">
     <meta name="description" content="">
-    <title>组团管理界面</title>
+    <title>邀请成员</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="${pageContext.request.contextPath}/css/jquery.contextMenu.min.css" rel="stylesheet"/>
     <link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet"/>
@@ -30,10 +30,10 @@
                 <div class="select-list">
                     <ul>
                         <li>
-                            活动ID：<input type="text" name="eventid"/>
+                            用户ID：<input type="text" name="uid"/>
                         </li>
                         <li>
-                            活动名：<input type="text" name="eventname"/>
+                            用户名：<input type="text" name="username"/>
                         </li>
                         <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
@@ -45,16 +45,11 @@
                 </div>
             </form>
         </div>
-
         <div class="btn-group-sm" id="toolbar" role="group">
-            <a class="btn btn-success" onclick="$.operate.add()">
-                <i class="fa fa-plus"></i> 新增
-            </a>
-            <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
-                <i class="fa fa-edit"></i> 修改
-            </a>
-            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
-                <i class="fa fa-remove"></i> 删除
+            <%--自己封装的invite()--%>
+            <a class="btn btn-success multiple"
+               onclick="invite('${pageContext.request.contextPath}/member/invite/${event.eventid}')">
+                <i class="fa fa-plus"></i> 邀请
             </a>
         </div>
 
@@ -87,18 +82,47 @@
 <script src="${pageContext.request.contextPath}/js/group-ui.js"></script>
 
 <script>
+    function invite(url)
+    {
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length == 0)
+        {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        $.modal.confirm("确认邀请吗?", function ()
+        {
+            var data = {"ids": rows.join()};
+            var config = {
+                url: url,
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (r)
+                {
+                    if (r.code == 0)
+                    {
+                        $.modal.msgSuccess(r.msg);
+                    }
+                    else
+                    {
+                        $.modal.msgError(r.msg);
+                    }
+                }
+            };
+            $.ajax(config)
+        });
+    }
+
     var ctx = getContextPath();
 
     $(function ()
     {
         var options = {
-            url: ctx + "/event/list",
-            createUrl: ctx + "/event/add.jsp",
-            updateUrl: ctx + "/event/update/{id}",
-            removeUrl: ctx + "/event/remove",
+            url: ctx + "/member/listuser/${event.eventid}",
             striped: true,                      //是否显示行间隔色
             sortable: true,
-            sortName: "eventid",
+            sortName: "uid",
             sortOrder: "asc",
             sidePagination: "server",
             pagination: true,
@@ -106,60 +130,57 @@
             pageSize: 20,  // 指定每页的大小
             pageList: [20, 30, 50], // 可以设置每页记录条数的列表
             dataField: "rows",
-            uniqueId: "eventid",
-            modalName: "活动",
+            uniqueId: "uid",
+            modalName: "用户",
             columns: [{
                 checkbox: true
             },
                 {
-                    field: 'eventid',
-                    title: '活动ID',
+                    field: 'uid',
+                    title: '用户ID',
                     sortable: true,
                     align: 'center',
                 },
                 {
-                    field: 'eventname',
-                    title: '活动名'
+                    field: 'username',
+                    title: '用户名'
                 },
                 {
-                    // field: 'content',
-                    title: '活动详情',
+                    field: 'gender',
+                    title: '性别',
                     align: 'center',
-                    formatter: function (value, row, index)
+                    //通过formatter处理男女值
+                    formatter: function (value)
                     {
-                        var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick=" $.modal.open(\'活动详情\', \'${pageContext.request.contextPath}/member/listmember/' + row.eventid + '\', 850, 650)"><i class="fa fa-edit"></i>查看详情</a> ');
-                        return actions.join('');
+                        if (value == "male")
+                        {
+                            return "男";
+                        }
+                        else
+                        {
+                            return "女";
+                        }
                     }
                 },
                 {
-                    field: 'starttime',
-                    title: '开始时间',
+                    field: 'phone',
+                    title: '电话号码',
                 },
                 {
-                    field: 'length',
-                    title: '持续时间/(天)',
+                    field: 'identity',
+                    title: '身份',
                     align: 'center',
-                },
-                {
-                    field: 'curperson',
-                    title: '当前人数',
-                    align: 'center',
-                },
-                {
-                    field: 'maxperson',
-                    title: '最大人数',
-                    align: 'center',
-                },
-                {
-                    field: 'curmoney',
-                    title: '当前资金/(元)',
-                    align: 'center',
-                },
-                {
-                    field: 'totalmoney',
-                    title: '总资金/(元)',
-                    align: 'center',
+                    formatter(value)
+                    {
+                        if (value == 0)
+                        {
+                            return "管理员";
+                        }
+                        else
+                        {
+                            return "用户";
+                        }
+                    }
                 }
             ]
         };
@@ -176,4 +197,3 @@
 </script>
 </body>
 </html>
-

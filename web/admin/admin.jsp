@@ -31,7 +31,9 @@
             <ul class="nav" id="side-menu">
                 <li>
                     <div class="user-panel">
-                        <a class="menuItem noactive" title="个人中心" href="/system/user/profile">
+                        <a title="个人中心"
+                           href="javascript:void(0)"
+                           onclick="$.modal.open('个人中心', '${pageContext.request.contextPath}/admin/update/${user.uid}')">
                             <div class="hide">个人中心</div>
                             <div class="pull-left image">
                                 <img src="${pageContext.request.contextPath}/img/profile.PNG"
@@ -91,8 +93,10 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li class="mt5">
-                                <a href="${pageContext.request.contextPath}/common/profile.jsp" class="menuItem">
-                                    <i class="fa fa-user"></i> 个人中心</a>
+                                <a title="个人中心"
+                                   href="javascript:void(0)"
+                                   onclick="$.modal.open('个人中心', '${pageContext.request.contextPath}/admin/update/${user.uid}')">
+                                    <i class="fa fa-user"></i>个人中心</a>
                             </li>
                             <li>
                                 <a onclick="resetPwd()">
@@ -177,18 +181,6 @@
     {
         var url = ctx + 'system/user/profile/resetPwd';
         $.modal.open("重置密码", url, '770', '380');
-    }
-
-    /* 切换主题 */
-    function switchSkin()
-    {
-        layer.open({
-            type: 2,
-            shadeClose: true,
-            title: "切换主题",
-            area: ["530px", "386px"],
-            content: [ctx + "system/switchSkin", 'no']
-        })
     }
 
     /** 刷新时访问路径页签 */
